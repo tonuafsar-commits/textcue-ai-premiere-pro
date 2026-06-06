@@ -79,10 +79,77 @@ function initializePanel() {
   elements.markersOnlyBtn.addEventListener("click", handleMarkersOnly);
   elements.exportReportBtn.addEventListener("click", handleExportReport);
   elements.undoBtn.addEventListener("click", handleUndoGeneratedText);
+  bindStylePreview();
 
   refreshSequenceStatus();
   setMessage(premiere.isAvailable ? "Ready." : "Premiere DOM unavailable. UI preview mode is active.");
   runUpdateCheck();
+}
+
+function bindStylePreview() {
+  for (const id of ["fontFamily", "fontSize", "fontWeight", "fontStyle", "fillColor", "strokeColor", "strokeWidth", "backgroundColor", "placement"]) {
+    document.getElementById(id).addEventListener("input", updateStylePreview);
+    document.getElementById(id).addEventListener("change", updateStylePreview);
+  }
+  updateStylePreview();
+}
+
+function updateStylePreview() {
+  const settings = readSettingsFromDom();
+  const preview = document.getElementById("textPreview");
+  const stage = document.getElementById("textPreviewStage");
+  if (!preview || !stage) {
+    return;
+  }
+
+  preview.style.fontFamily = `"${settings.fontFamily}", Arial, sans-serif`;
+  preview.style.fontSize = `${Math.max(18, Math.round(settings.fontSize * 0.5))}px`;
+  preview.style.fontWeight = settings.fontWeight;
+  preview.style.fontStyle = settings.fontStyle;
+  preview.style.color = settings.fillColor;
+  preview.style.backgroundColor = settings.backgroundColor;
+  preview.style.textShadow = buildPreviewStroke(settings.strokeColor, settings.strokeWidth);
+  applyPreviewPlacement(preview, settings.placement);
+}
+
+function buildPreviewStroke(color, width) {
+  const size = Math.min(8, Math.max(0, Math.round(width * 0.45)));
+  if (size === 0) {
+    return "none";
+  }
+
+  return [
+    `-${size}px -${size}px 0 ${color}`,
+    `${size}px -${size}px 0 ${color}`,
+    `-${size}px ${size}px 0 ${color}`,
+    `${size}px ${size}px 0 ${color}`
+  ].join(", ");
+}
+
+function applyPreviewPlacement(preview, placement) {
+  const resolved = placement === "auto" ? "lower-third" : placement;
+  preview.style.top = "auto";
+  preview.style.right = "auto";
+  preview.style.bottom = "22px";
+  preview.style.left = "50%";
+  preview.style.transform = "translateX(-50%)";
+
+  if (resolved === "center") {
+    preview.style.top = "50%";
+    preview.style.bottom = "auto";
+    preview.style.transform = "translate(-50%, -50%)";
+  }
+
+  if (resolved === "center-lower") {
+    preview.style.bottom = "48px";
+  }
+
+  if (resolved === "right-side") {
+    preview.style.left = "auto";
+    preview.style.right = "22px";
+    preview.style.bottom = "50%";
+    preview.style.transform = "translateY(50%)";
+  }
 }
 
 async function runUpdateCheck() {
@@ -248,9 +315,10 @@ async function createTextForCue(cue, settings) {
   }
 
   const textLayerId = await premiere.createTextLayer(cue, settings);
-  cue.textLayerId = textLayerId;
-  cue.status = "Created";
-  generatedTextLayerIds.push(textLayerId);
+    cue.textLayerId = textLayerId;
+    cue.status = "Created";
+    generatedTextLayerIds.push(textLayerId);
+    document.getElementById("textPreview").textContent = cue.suggestedText;
 
   if (settings.addMarkersAfterText) {
     cue.markerId = await premiere.addMarker(cue, "done");

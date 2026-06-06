@@ -88,12 +88,23 @@ export function createPremiereAdapter() {
       }
 
       const style = STYLE_PRESETS[settings.stylePreset] || STYLE_PRESETS["Product Review"];
+      const finalStyle = {
+        ...style,
+        fontFamily: settings.fontFamily || style.fontFamily,
+        fontSize: settings.fontSize || style.fontSize,
+        fontWeight: settings.fontWeight || "700",
+        fontStyle: settings.fontStyle || "normal",
+        fillColor: settings.fillColor || style.fillColor,
+        strokeColor: settings.strokeColor || style.strokeColor,
+        strokeWidth: Number.isFinite(settings.strokeWidth) ? settings.strokeWidth : style.strokeWidth,
+        backgroundColor: settings.backgroundColor || style.backgroundColor
+      };
       const payload = {
         text: cue.suggestedText,
         startSeconds: cue.startSeconds,
         durationSeconds: settings.textDuration,
-        placement: placementForCue(cue.category, style.position, settings.verticalSafeZone),
-        style
+        placement: placementForCue(cue.category, settings.placement === "auto" ? style.position : settings.placement, settings.verticalSafeZone),
+        style: finalStyle
       };
 
       // TODO: Replace these fallbacks with the exact text/graphic creation API available in your Premiere Pro UXP version.
@@ -174,6 +185,10 @@ export function markerNameForCue(cue, status) {
 }
 
 function placementForCue(category, presetPosition, verticalSafeZone) {
+  if (presetPosition && presetPosition !== "auto") {
+    return verticalSafeZone ? `${presetPosition}-vertical-safe` : presetPosition;
+  }
+
   const base = {
     "Ranking/product intro": "lower-third",
     "Product name": "lower-third",

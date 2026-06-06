@@ -144,7 +144,8 @@ label {
 }
 
 .transcript-section,
-.result-section {
+.result-section,
+.style-preview-section {
   display: grid;
   gap: 8px;
 }
@@ -158,6 +159,42 @@ textarea {
   border-radius: 8px;
   background: #101010;
   color: var(--text);
+}
+
+.preview-stage {
+  position: relative;
+  min-height: 180px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background:
+    linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px),
+    linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px),
+    linear-gradient(135deg, #222 0%, #111 48%, #303030 100%);
+  background-size: 40px 40px, 40px 40px, cover;
+}
+
+.text-preview {
+  position: absolute;
+  left: 50%;
+  bottom: 22px;
+  max-width: 86%;
+  padding: 6px 14px;
+  border-radius: 6px;
+  color: #fff;
+  background: #1f7ae0;
+  font-family: Arial, sans-serif;
+  font-size: 34px;
+  font-weight: 700;
+  line-height: 1.05;
+  text-align: center;
+  transform: translateX(-50%);
+  text-shadow:
+    -2px -2px 0 #101010,
+    2px -2px 0 #101010,
+    -2px 2px 0 #101010,
+    2px 2px 0 #101010;
+  white-space: normal;
 }
 
 .table-wrap {

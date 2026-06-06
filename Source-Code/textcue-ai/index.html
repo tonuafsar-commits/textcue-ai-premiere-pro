@@ -13,12 +13,11 @@
           <h1>TextCue AI</h1>
           <p id="sequenceStatus">Import a timestamped transcript and generate missing text cues.</p>
         </div>
-        <span class="badge">v0.1.7</span>
+        <span class="badge">v0.1.8</span>
       </header>
 
       <section class="toolbar" aria-label="Main actions">
-        <button id="importTranscriptBtn">Import Transcript</button>
-        <button id="autoCreateBtn" class="primary">Auto Create All Text</button>
+        <button id="autoCreateBtn" class="primary">Generate Text Automatically</button>
         <button id="markersOnlyBtn">Add Markers Only</button>
         <button id="captureStyleBtn">Capture Selected Text Style</button>
         <button id="applyStyleAllBtn">Apply Style To All Generated Text</button>
@@ -154,7 +153,7 @@
       <section class="transcript-section">
         <div class="section-heading">
           <h2>Transcript</h2>
-          <button id="analyzeTranscriptBtn" class="primary">Analyze Transcript</button>
+          <button id="analyzeTranscriptBtn">Preview Detected Cues</button>
         </div>
         <textarea id="transcriptInput" spellcheck="false" placeholder="00:12 - At number 5, we have the TORVO TD3 Dash Cam."></textarea>
       </section>
@@ -188,7 +187,7 @@
             </thead>
             <tbody id="resultsBody">
               <tr>
-                <td colspan="6" class="empty-state">Paste or import a timestamped transcript to begin.</td>
+                <td colspan="6" class="empty-state">Paste a timestamped transcript to begin.</td>
               </tr>
             </tbody>
           </table>
@@ -201,8 +200,6 @@
         <a id="updateLink" href="#" target="_blank" rel="noopener">Download update</a>
       </footer>
     </main>
-
-    <input id="fileInput" type="file" accept=".txt,.srt,.vtt" hidden />
     <script type="module" src="./src/main.js"></script>
   </body>
 </html>

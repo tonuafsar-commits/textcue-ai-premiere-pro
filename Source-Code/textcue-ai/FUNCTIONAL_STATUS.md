@@ -5,7 +5,7 @@ TextCue AI is packaged as a Premiere Pro UXP extension MVP.
 ## Implemented
 
 - Premiere UXP manifest v5 panel scaffold.
-- Manual transcript paste/import.
+- Manual transcript paste.
 - Timestamp parsing for `MM:SS - text`, `HH:MM:SS - text`, bracketed timestamps, and seconds.
 - Rule-based cue detection for ranking/product intro, product names, prices, specs, warnings, tutorial steps, claims, pros/cons, and compatibility notes.
 - Suggested on-screen text generation.

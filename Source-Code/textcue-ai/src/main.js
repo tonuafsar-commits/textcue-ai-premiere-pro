@@ -52,7 +52,6 @@ function initializePanel() {
 
   for (const id of [
     "sequenceStatus",
-    "importTranscriptBtn",
     "autoCreateBtn",
     "markersOnlyBtn",
     "captureStyleBtn",
@@ -61,7 +60,6 @@ function initializePanel() {
     "undoBtn",
     "analyzeTranscriptBtn",
     "transcriptInput",
-    "fileInput",
     "resultsBody",
     "resultSummary",
     "messageBar",
@@ -73,8 +71,6 @@ function initializePanel() {
     elements[id] = document.getElementById(id);
   }
 
-  elements.importTranscriptBtn.addEventListener("click", () => elements.fileInput.click());
-  elements.fileInput.addEventListener("change", handleTranscriptImport);
   elements.analyzeTranscriptBtn.addEventListener("click", handleAnalyzeTranscript);
   elements.autoCreateBtn.addEventListener("click", handleAutoCreateAll);
   elements.markersOnlyBtn.addEventListener("click", handleMarkersOnly);
@@ -175,23 +171,6 @@ async function refreshSequenceStatus() {
   elements.sequenceStatus.textContent = sequence ? `Active sequence: ${sequence.name || "Untitled"}` : "No active sequence detected.";
 }
 
-async function handleTranscriptImport(event) {
-  const file = event.target.files?.[0];
-  if (!file) {
-    return;
-  }
-
-  try {
-    elements.transcriptInput.value = await file.text();
-    setMessage(`Imported ${file.name}.`);
-    await handleAnalyzeTranscript();
-  } catch (error) {
-    showError(error);
-  } finally {
-    event.target.value = "";
-  }
-}
-
 async function handleAnalyzeTranscript() {
   try {
     const settings = readSettingsFromDom();
@@ -217,6 +196,10 @@ async function handleAnalyzeTranscript() {
 
 async function handleAutoCreateAll() {
   const settings = readSettingsFromDom();
+  if (cues.length === 0) {
+    await handleAnalyzeTranscript();
+  }
+
   const targets = cues.filter((cue) => cue.status === "Needs Text" || cue.status === "Review");
   if (targets.length === 0) {
     setMessage("No pending text cues to create.");

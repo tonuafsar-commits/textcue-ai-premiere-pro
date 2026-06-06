@@ -35,6 +35,9 @@ Use "Enable default highlight background" to add a bright magenta background to 
 
 Read "SOLUTION - Install and Use Problems.txt" if the plugin does not install or does not appear inside Premiere Pro.
 
+Transcript workflow:
+Paste a timestamped transcript into the panel, then click "Generate Text Automatically". File transcript import has been removed to keep the panel simpler and safer inside Premiere.
+
 Functional status:
 The MVP panel, transcript import, parsing, cue detection, suggestion generation, result list, settings, report export, and packaging are implemented.
 Premiere host actions for text-layer creation, marker metadata/colors, playhead jumping, and generated-text undo are isolated in src/premiere.js and may need final wiring against the exact Premiere Pro UXP API version installed on the editor's machine.

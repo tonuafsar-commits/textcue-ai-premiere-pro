@@ -1,6 +1,5 @@
 import { detectImportantPhrases } from "./detector.js";
 import { createPremiereAdapter } from "./premiere.js";
-import { buildReport, exportTextFile } from "./reportExporter.js";
 import { readSettingsFromDom } from "./settings.js";
 import { markCoveredCues } from "./timelineScanner.js";
 import { parseTranscript } from "./transcriptParser.js";
@@ -8,6 +7,7 @@ import { checkForUpdate } from "./updateChecker.js";
 
 let cues = [];
 let generatedTextLayerIds = [];
+let capturedTextStyle = null;
 let premiere = null;
 
 const elements = {};
@@ -52,11 +52,11 @@ function initializePanel() {
 
   for (const id of [
     "sequenceStatus",
-    "scanSequenceBtn",
     "importTranscriptBtn",
     "autoCreateBtn",
     "markersOnlyBtn",
-    "exportReportBtn",
+    "captureStyleBtn",
+    "applyStyleAllBtn",
     "undoBtn",
     "analyzeTranscriptBtn",
     "transcriptInput",
@@ -64,6 +64,7 @@ function initializePanel() {
     "resultsBody",
     "resultSummary",
     "messageBar",
+    "capturedStyleStatus",
     "updateBar",
     "updateMessage",
     "updateLink"
@@ -71,13 +72,13 @@ function initializePanel() {
     elements[id] = document.getElementById(id);
   }
 
-  elements.scanSequenceBtn.addEventListener("click", handleScanSequence);
   elements.importTranscriptBtn.addEventListener("click", () => elements.fileInput.click());
   elements.fileInput.addEventListener("change", handleTranscriptImport);
   elements.analyzeTranscriptBtn.addEventListener("click", handleAnalyzeTranscript);
   elements.autoCreateBtn.addEventListener("click", handleAutoCreateAll);
   elements.markersOnlyBtn.addEventListener("click", handleMarkersOnly);
-  elements.exportReportBtn.addEventListener("click", handleExportReport);
+  elements.captureStyleBtn.addEventListener("click", handleCaptureSelectedStyle);
+  elements.applyStyleAllBtn.addEventListener("click", handleApplyStyleToAllGeneratedText);
   elements.undoBtn.addEventListener("click", handleUndoGeneratedText);
   bindStylePreview();
 
@@ -172,26 +173,6 @@ async function refreshSequenceStatus() {
   elements.sequenceStatus.textContent = sequence ? `Active sequence: ${sequence.name || "Untitled"}` : "No active sequence detected.";
 }
 
-async function handleScanSequence() {
-  try {
-    const sequence = await premiere.getActiveSequence();
-    if (!sequence) {
-      setMessage("No active sequence is open. Open a sequence in Premiere Pro first.", "error");
-      await refreshSequenceStatus();
-      return;
-    }
-
-    await refreshSequenceStatus();
-    if (cues.length > 0) {
-      cues = await markCoveredCues(cues, premiere, readSettingsFromDom());
-      renderResults();
-    }
-    setMessage("Active sequence scanned.");
-  } catch (error) {
-    showError(error);
-  }
-}
-
 async function handleTranscriptImport(event) {
   const file = event.target.files?.[0];
   if (!file) {
@@ -255,12 +236,33 @@ async function handleMarkersOnly() {
   });
 }
 
-async function handleExportReport() {
+async function handleCaptureSelectedStyle() {
   try {
-    const sequence = await premiere.getActiveSequence();
-    const report = buildReport(cues, readSettingsFromDom(), sequence?.name || "Active Sequence");
-    await exportTextFile("textcue-ai-report.txt", report);
-    setMessage("Report exported.");
+    capturedTextStyle = await premiere.getSelectedTextLayerStyle();
+    applyCapturedStyleToControls(capturedTextStyle);
+    updateStylePreview();
+    elements.capturedStyleStatus.textContent = "Captured selected text style. You can now apply it to all generated text.";
+    setMessage("Captured style from selected text layer.");
+  } catch (error) {
+    showError(error);
+  }
+}
+
+async function handleApplyStyleToAllGeneratedText() {
+  const createdCueIds = cues.filter((cue) => cue.textLayerId && cue.status === "Created").map((cue) => cue.textLayerId);
+  if (createdCueIds.length === 0) {
+    setMessage("No generated text layers found in this session.", "error");
+    return;
+  }
+
+  const style = capturedTextStyle || buildStyleFromCurrentControls();
+  try {
+    let updated = 0;
+    for (const textLayerId of createdCueIds) {
+      await premiere.applyTextLayerStyle(textLayerId, style);
+      updated += 1;
+    }
+    setMessage(`Applied style to ${updated} generated text layer(s).`);
   } catch (error) {
     showError(error);
   }
@@ -315,10 +317,10 @@ async function createTextForCue(cue, settings) {
   }
 
   const textLayerId = await premiere.createTextLayer(cue, settings);
-    cue.textLayerId = textLayerId;
-    cue.status = "Created";
-    generatedTextLayerIds.push(textLayerId);
-    document.getElementById("textPreview").textContent = cue.suggestedText;
+  cue.textLayerId = textLayerId;
+  cue.status = "Created";
+  generatedTextLayerIds.push(textLayerId);
+  document.getElementById("textPreview").textContent = cue.suggestedText;
 
   if (settings.addMarkersAfterText) {
     cue.markerId = await premiere.addMarker(cue, "done");
@@ -405,6 +407,41 @@ function handleCueIgnore(cue) {
   cue.ignored = true;
   renderResults();
   setMessage(`Ignored cue: ${cue.suggestedText}`);
+}
+
+function buildStyleFromCurrentControls() {
+  const settings = readSettingsFromDom();
+  return {
+    fontFamily: settings.fontFamily,
+    fontSize: settings.fontSize,
+    fontWeight: settings.fontWeight,
+    fontStyle: settings.fontStyle,
+    fillColor: settings.fillColor,
+    strokeColor: settings.strokeColor,
+    strokeWidth: settings.strokeWidth,
+    backgroundColor: settings.backgroundColor,
+    placement: settings.placement
+  };
+}
+
+function applyCapturedStyleToControls(style) {
+  setControlValue("fontFamily", style.fontFamily);
+  setControlValue("fontSize", style.fontSize);
+  setControlValue("fontWeight", style.fontWeight);
+  setControlValue("fontStyle", style.fontStyle);
+  setControlValue("fillColor", style.fillColor);
+  setControlValue("strokeColor", style.strokeColor);
+  setControlValue("strokeWidth", style.strokeWidth);
+  setControlValue("backgroundColor", style.backgroundColor);
+  setControlValue("placement", style.placement);
+}
+
+function setControlValue(id, value) {
+  const control = document.getElementById(id);
+  if (!control || value === undefined || value === null || value === "") {
+    return;
+  }
+  control.value = String(value);
 }
 
 function countByStatus(items) {

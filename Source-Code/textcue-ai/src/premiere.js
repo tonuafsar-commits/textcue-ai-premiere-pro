@@ -167,6 +167,48 @@ export function createPremiereAdapter() {
       }
       console.info(`Undo requested for generated text layer ${textLayerId}.`);
       return false;
+    },
+
+    async getSelectedTextLayerStyle() {
+      const sequence = await this.getActiveSequence();
+      if (!sequence) {
+        throw new Error("No active sequence is open.");
+      }
+
+      // TODO: Wire this to the installed Premiere Pro UXP API for reading the selected Graphic/Text component.
+      // Expected return shape:
+      // { fontFamily, fontSize, fontWeight, fontStyle, fillColor, strokeColor, strokeWidth, backgroundColor, placement }
+      if (sequence.getSelectedTextLayerStyle) {
+        return sequence.getSelectedTextLayerStyle();
+      }
+
+      if (sequence.getSelection) {
+        const selection = await sequence.getSelection();
+        const selectedItem = Array.isArray(selection) ? selection[0] : selection?.[0] || selection;
+        if (selectedItem?.getTextStyle) {
+          return selectedItem.getTextStyle();
+        }
+      }
+
+      throw new Error("Selected text style reading is not available in this Premiere UXP build. Wire the TODO in src/premiere.js.");
+    },
+
+    async applyTextLayerStyle(textLayerId, style) {
+      const sequence = await this.getActiveSequence();
+      if (!sequence) {
+        throw new Error("No active sequence is open.");
+      }
+
+      // TODO: Wire this to the installed Premiere Pro UXP API for applying style to generated Graphic/Text layers.
+      if (sequence.applyTextLayerStyle) {
+        return sequence.applyTextLayerStyle(textLayerId, style);
+      }
+      if (sequence.updateTextLayerStyle) {
+        return sequence.updateTextLayerStyle(textLayerId, style);
+      }
+
+      console.info("Apply style requested:", { textLayerId, style });
+      throw new Error("Applying style to generated text layers is not available in this Premiere UXP build. Wire the TODO in src/premiere.js.");
     }
   };
 }

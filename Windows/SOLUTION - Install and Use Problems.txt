@@ -66,10 +66,10 @@ TextCue AI - Solution for Install and Use Problems
   00:39 - The price is around $49.
 - Confirm the Text Mode is Balanced or Heavy if you want specs and tutorial steps.
 
-9. Create Text, Add Marker, or Jump does not work
--------------------------------------------------
+9. Create Text, Add Marker, Jump, Capture Style, or Apply Style does not work
+----------------------------------------------------------------------------
 - The MVP UI and detection logic are complete.
-- Premiere Pro UXP host APIs for text-layer creation, marker metadata, playhead jumping, and undo removal can differ by Premiere build.
+- Premiere Pro UXP host APIs for text-layer creation, marker metadata, playhead jumping, undo removal, selected-style reading, and style applying can differ by Premiere build.
 - Open src/premiere.js and update the TODO sections using the TypeScript definitions or API docs for the installed Premiere Pro version.
 - Marker-only and text-creation payloads are already prepared in that adapter so the rest of the plugin does not need to change.
 

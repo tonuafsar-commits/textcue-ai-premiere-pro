@@ -11,17 +11,17 @@
       <header class="panel-header">
         <div>
           <h1>TextCue AI</h1>
-          <p id="sequenceStatus">Open a Premiere sequence, then scan.</p>
+          <p id="sequenceStatus">Open a Premiere sequence, then import a transcript.</p>
         </div>
         <span class="badge">MVP</span>
       </header>
 
       <section class="toolbar" aria-label="Main actions">
-        <button id="scanSequenceBtn">Scan Active Sequence</button>
         <button id="importTranscriptBtn">Import Transcript</button>
         <button id="autoCreateBtn" class="primary">Auto Create All Text</button>
         <button id="markersOnlyBtn">Add Markers Only</button>
-        <button id="exportReportBtn">Export Report</button>
+        <button id="captureStyleBtn">Capture Selected Text Style</button>
+        <button id="applyStyleAllBtn">Apply Style To All Generated Text</button>
         <button id="undoBtn">Undo Generated Text</button>
       </section>
 
@@ -142,8 +142,8 @@
 
       <section class="style-preview-section">
         <div class="section-heading">
-          <h2>Text Style Preview</h2>
-          <span>Preview only; final render happens in Premiere.</span>
+          <h2>Text Style Control</h2>
+          <span id="capturedStyleStatus">Edit one generated text layer, select it, then capture and apply its style.</span>
         </div>
         <div id="textPreviewStage" class="preview-stage">
           <div id="textPreview" class="text-preview">#5 TORVO TD3 Dash Cam</div>

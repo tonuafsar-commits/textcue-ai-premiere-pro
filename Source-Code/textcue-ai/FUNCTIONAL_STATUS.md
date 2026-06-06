@@ -12,7 +12,7 @@ TextCue AI is packaged as a Premiere Pro UXP extension MVP.
 - Text Mode, Content Type, Style Preset, duplicate-avoidance, marker-after-text, duration, and vertical safe-zone settings.
 - Result list with timestamp, spoken line, suggested text, category, confidence, status, edit field, and actions.
 - Session tracking for generated text IDs.
-- TXT report export.
+- Captured-style workflow for applying one edited text layer style to all generated text layers in the current session.
 - Premiere adapter that checks for active sequence and isolates host-specific timeline actions.
 - In-panel GitHub release update check for direct-distribution users.
 

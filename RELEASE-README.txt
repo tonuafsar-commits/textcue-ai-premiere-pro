@@ -36,7 +36,7 @@ Use "Enable default highlight background" to add a bright magenta background to 
 Read "SOLUTION - Install and Use Problems.txt" if the plugin does not install or does not appear inside Premiere Pro.
 
 Transcript workflow:
-Paste a timestamped transcript into the panel, then click "Generate Text Automatically". File transcript import has been removed to keep the panel simpler and safer inside Premiere.
+Click "Generate Text Automatically". TextCue AI scans the active sequence for captions or available Premiere transcript data. Editors do not paste or import transcripts.
 
 Functional status:
 The MVP panel, transcript import, parsing, cue detection, suggestion generation, result list, settings, report export, and packaging are implemented.

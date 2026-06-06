@@ -11,9 +11,9 @@
       <header class="panel-header">
         <div>
           <h1>TextCue AI</h1>
-          <p id="sequenceStatus">Import a timestamped transcript and generate missing text cues.</p>
+          <p id="sequenceStatus">Open a sequence with captions or transcript data, then generate text.</p>
         </div>
-        <span class="badge">v0.1.8</span>
+        <span class="badge">v0.1.9</span>
       </header>
 
       <section class="toolbar" aria-label="Main actions">
@@ -150,14 +150,6 @@
         </div>
       </section>
 
-      <section class="transcript-section">
-        <div class="section-heading">
-          <h2>Transcript</h2>
-          <button id="analyzeTranscriptBtn">Preview Detected Cues</button>
-        </div>
-        <textarea id="transcriptInput" spellcheck="false" placeholder="00:12 - At number 5, we have the TORVO TD3 Dash Cam."></textarea>
-      </section>
-
       <section class="style-preview-section">
         <div class="section-heading">
           <h2>Text Style Control</h2>
@@ -187,7 +179,7 @@
             </thead>
             <tbody id="resultsBody">
               <tr>
-                <td colspan="6" class="empty-state">Paste a timestamped transcript to begin.</td>
+                <td colspan="6" class="empty-state">Click Generate Text Automatically to scan active sequence captions/transcript data.</td>
               </tr>
             </tbody>
           </table>

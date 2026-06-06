@@ -58,12 +58,10 @@ TextCue AI - Solution for Install and Use Problems
 - Open a sequence in the timeline.
 - Click Scan Active Sequence again.
 
-8. Transcript imports but no cues are found
-------------------------------------------
-- Use timestamped lines like:
-  00:12 - At number 5, we have the TORVO TD3 Dash Cam.
-  00:27 - It records in 4K with night vision.
-  00:39 - The price is around $49.
+8. Generate Text Automatically finds no cues
+-------------------------------------------
+- Make sure the active sequence has captions or Premiere transcript data.
+- If Premiere has not transcribed the media yet, run Premiere's built-in transcription/caption workflow first.
 - Confirm the Text Mode is Balanced or Heavy if you want specs and tutorial steps.
 
 9. Create Text, Add Marker, Jump, Capture Style, or Apply Style does not work
@@ -85,7 +83,6 @@ macOS:
 
 11. Safe fallback for editors
 ----------------------------
-- Paste transcript.
-- Click Analyze Transcript.
+- Click Generate Text Automatically.
 - Use Add Markers Only when host marker APIs are wired for the installed Premiere version.
 - Use Enable default highlight background only when you want generated text to stand out during review.

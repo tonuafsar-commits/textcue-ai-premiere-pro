@@ -81,6 +81,25 @@ export function createPremiereAdapter() {
       }
     },
 
+    async getActiveSequenceTranscriptLines() {
+      const sequence = await this.getActiveSequence();
+      if (!sequence) {
+        throw new Error("No active sequence is open.");
+      }
+
+      const captionLines = await readCaptionTrackLines(sequence, app);
+      if (captionLines.length > 0) {
+        return captionLines;
+      }
+
+      const transcriptLines = await readTranscriptJsonLines(sequence, app);
+      if (transcriptLines.length > 0) {
+        return transcriptLines;
+      }
+
+      return [];
+    },
+
     async createTextLayer(cue, settings) {
       const sequence = await this.getActiveSequence();
       if (!sequence) {
@@ -313,6 +332,162 @@ function readClipRange(clip) {
   return { startSeconds, endSeconds };
 }
 
+async function readCaptionTrackLines(sequence, app) {
+  const lines = [];
+  try {
+    const count = Number(sequence.getCaptionTrackCount?.() || 0);
+    const clipType = app?.constants?.TrackItemType?.CLIP ?? 1;
+    for (let trackIndex = 0; trackIndex < count; trackIndex += 1) {
+      const track = sequence.getCaptionTrack(trackIndex);
+      const items = track?.getTrackItems?.(clipType, false) || [];
+      for (const item of items) {
+        const text = readTrackItemText(item);
+        const startSeconds = premiereTimeToSeconds(item.getStartTime?.() || item.getStart?.() || item.start);
+        if (text && Number.isFinite(startSeconds)) {
+          lines.push({
+            id: `caption-${trackIndex}-${startSeconds}-${lines.length}`,
+            startSeconds,
+            timeLabel: secondsToTimestamp(startSeconds),
+            text
+          });
+        }
+      }
+    }
+  } catch (error) {
+    console.warn("Could not read caption tracks.", error);
+  }
+
+  return lines.sort((a, b) => a.startSeconds - b.startSeconds);
+}
+
+async function readTranscriptJsonLines(sequence, app) {
+  try {
+    const transcriptApi = app?.Transcript || app?.transcript;
+    const projectItems = collectTranscriptProjectItems(sequence);
+    for (const projectItem of projectItems) {
+      if (!projectItem || !transcriptApi?.exportToJSON) {
+        continue;
+      }
+      const json = transcriptApi.exportToJSON(projectItem);
+      const lines = transcriptJsonToLines(json);
+      if (lines.length > 0) {
+        return lines;
+      }
+    }
+  } catch (error) {
+    console.warn("Could not read Premiere transcript JSON.", error);
+  }
+
+  return [];
+}
+
+function collectTranscriptProjectItems(sequence) {
+  const items = [];
+  const sequenceProjectItem = sequence.getProjectItem?.();
+  if (sequenceProjectItem) {
+    items.push(sequenceProjectItem);
+  }
+
+  try {
+    const audioTrackCount = Number(sequence.getAudioTrackCount?.() || 0);
+    for (let trackIndex = 0; trackIndex < audioTrackCount; trackIndex += 1) {
+      const track = sequence.getAudioTrack(trackIndex);
+      const clipType = 1;
+      const trackItems = track?.getTrackItems?.(clipType, false) || [];
+      for (const trackItem of trackItems) {
+        const projectItem = trackItem.getProjectItem?.();
+        if (projectItem) {
+          items.push(projectItem);
+        }
+      }
+    }
+  } catch (error) {
+    console.warn("Could not collect audio project items for transcript lookup.", error);
+  }
+
+  return [...new Set(items)];
+}
+
+function transcriptJsonToLines(json) {
+  if (!json) {
+    return [];
+  }
+
+  try {
+    const data = typeof json === "string" ? JSON.parse(json) : json;
+    const segments = findTranscriptSegments(data);
+    return segments
+      .map((segment, index) => {
+        const text = readSegmentText(segment);
+        const startSeconds = readSegmentStartSeconds(segment);
+        if (!text || !Number.isFinite(startSeconds)) {
+          return null;
+        }
+        return {
+          id: `transcript-${startSeconds}-${index}`,
+          startSeconds,
+          timeLabel: secondsToTimestamp(startSeconds),
+          text
+        };
+      })
+      .filter(Boolean)
+      .sort((a, b) => a.startSeconds - b.startSeconds);
+  } catch (error) {
+    console.warn("Could not parse transcript JSON.", error);
+    return [];
+  }
+}
+
+function findTranscriptSegments(value) {
+  if (!value || typeof value !== "object") {
+    return [];
+  }
+  if (Array.isArray(value)) {
+    return value.flatMap(findTranscriptSegments);
+  }
+
+  for (const key of ["segments", "textSegments", "transcriptSegments", "words", "items"]) {
+    if (Array.isArray(value[key])) {
+      return value[key];
+    }
+  }
+
+  return Object.values(value).flatMap((child) => Array.isArray(child) || typeof child === "object" ? findTranscriptSegments(child) : []);
+}
+
+function readTrackItemText(item) {
+  const candidates = [
+    item.getText?.(),
+    item.getCaptionText?.(),
+    item.getName?.(),
+    item.name,
+    item.text,
+    item.captionText
+  ];
+  return cleanupSpokenText(candidates.find((value) => typeof value === "string" && value.trim()));
+}
+
+function readSegmentText(segment) {
+  const candidates = [
+    segment.text,
+    segment.transcript,
+    segment.value,
+    segment.content,
+    segment.alternatives?.[0]?.text,
+    Array.isArray(segment.words) ? segment.words.map((word) => word.text || word.word).join(" ") : ""
+  ];
+  return cleanupSpokenText(candidates.find((value) => typeof value === "string" && value.trim()));
+}
+
+function readSegmentStartSeconds(segment) {
+  const value = segment.startSeconds ?? segment.startTime ?? segment.start ?? segment.begin ?? segment.time;
+  return premiereTimeToSeconds(value);
+}
+
+function cleanupSpokenText(value) {
+  return String(value || "").replace(/\s+/g, " ").trim();
+}
+
 function getCollectionItems(collection) {
   if (Array.isArray(collection)) {
     return collection;
@@ -344,6 +519,21 @@ function premiereTimeToSeconds(value) {
 
 function secondsToPremiereTime(seconds) {
   return seconds;
+}
+
+function secondsToTimestamp(totalSeconds) {
+  const safeSeconds = Math.max(0, Math.round(totalSeconds));
+  const hours = Math.floor(safeSeconds / 3600);
+  const minutes = Math.floor((safeSeconds % 3600) / 60);
+  const seconds = safeSeconds % 60;
+  const mm = String(minutes).padStart(2, "0");
+  const ss = String(seconds).padStart(2, "0");
+
+  if (hours > 0) {
+    return `${String(hours).padStart(2, "0")}:${mm}:${ss}`;
+  }
+
+  return `${mm}:${ss}`;
 }
 
 function getStableId(object) {

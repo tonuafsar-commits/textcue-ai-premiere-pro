@@ -1,6 +1,6 @@
 # TextCue AI
 
-TextCue AI is a Premiere Pro UXP panel MVP for finding spoken moments that probably need on-screen text. It parses a pasted timestamped transcript, detects cue-worthy lines, checks the active timeline for existing text-like clips, and lets an editor create text, add review markers, ignore cues, undo generated text from the current session, apply one captured text style to every generated text layer, and sync edited cue text back into generated layers.
+TextCue AI is a Premiere Pro UXP panel MVP for finding spoken moments that probably need on-screen text. It scans active sequence captions or available Premiere transcript data, detects cue-worthy lines, checks the active timeline for existing text-like clips, and lets an editor create text, add review markers, ignore cues, undo generated text from the current session, apply one captured text style to every generated text layer, and sync edited cue text back into generated layers.
 
 Stable latest all-in-one download:
 
@@ -42,21 +42,12 @@ If the manifest changes, unload and reload the plugin in UXP Developer Tool.
 
 1. Open a Premiere Pro project and activate the sequence you want to check.
 2. Open the TextCue AI panel.
-3. Paste a timestamped transcript into the transcript box.
-4. Use transcript lines like:
-
-```text
-00:12 - At number 5, we have the TORVO TD3 Dash Cam.
-00:27 - It records in 4K with night vision.
-00:39 - The price is around $49.
-00:52 - Make sure your car supports wired CarPlay first.
-```
-
-5. Click **Generate Text Automatically** to analyze and create text in one step, or **Preview Detected Cues** to review first.
+3. Make sure the active sequence already has captions or Premiere transcript data.
+4. Click **Generate Text Automatically** to scan and create text in one step.
 6. Review the detected cues. Edit suggested text directly in the result list when needed.
 7. Use per-cue actions: **Jump**, **Create Text**, **Add Marker**, or **Ignore**.
 8. Use global actions when ready:
-   - **Generate Text Automatically** analyzes the pasted transcript and creates all pending/review cues.
+   - **Generate Text Automatically** scans active sequence captions/transcript data and creates all pending/review cues.
    - **Add Markers Only** adds review markers without creating text.
    - **Capture Selected Text Style** reads the style from one selected generated text layer.
    - **Apply Style To All Generated Text** applies that captured style to every text layer generated in the current session.

@@ -2,7 +2,6 @@ import { detectImportantPhrases } from "./detector.js";
 import { createPremiereAdapter } from "./premiere.js";
 import { readSettingsFromDom } from "./settings.js";
 import { markCoveredCues } from "./timelineScanner.js";
-import { parseTranscript } from "./transcriptParser.js";
 import { checkForUpdate } from "./updateChecker.js";
 
 let cues = [];
@@ -58,8 +57,6 @@ function initializePanel() {
     "applyStyleAllBtn",
     "syncTextBtn",
     "undoBtn",
-    "analyzeTranscriptBtn",
-    "transcriptInput",
     "resultsBody",
     "resultSummary",
     "messageBar",
@@ -71,7 +68,6 @@ function initializePanel() {
     elements[id] = document.getElementById(id);
   }
 
-  elements.analyzeTranscriptBtn.addEventListener("click", handleAnalyzeTranscript);
   elements.autoCreateBtn.addEventListener("click", handleAutoCreateAll);
   elements.markersOnlyBtn.addEventListener("click", handleMarkersOnly);
   elements.captureStyleBtn.addEventListener("click", handleCaptureSelectedStyle);
@@ -171,15 +167,14 @@ async function refreshSequenceStatus() {
   elements.sequenceStatus.textContent = sequence ? `Active sequence: ${sequence.name || "Untitled"}` : "No active sequence detected.";
 }
 
-async function handleAnalyzeTranscript() {
+async function detectCuesFromActiveSequence() {
   try {
     const settings = readSettingsFromDom();
-    const lines = parseTranscript(elements.transcriptInput.value);
+    const lines = await premiere.getActiveSequenceTranscriptLines();
     if (lines.length === 0) {
       cues = [];
       renderResults();
-      setMessage("No timestamped transcript lines found. Use lines like 00:12 - Spoken text.", "error");
-      return;
+      throw new Error("No captions or transcript data found in the active sequence. Generate captions/transcript in Premiere first, then click Generate Text Automatically.");
     }
 
     const previousCreatedCues = cues.filter((cue) => cue.textLayerId);
@@ -188,17 +183,17 @@ async function handleAnalyzeTranscript() {
     renderResults();
     const synced = await syncChangedGeneratedTexts();
     const syncNote = synced > 0 ? ` Synced ${synced} existing layer(s).` : "";
-    setMessage(`Analyzed ${lines.length} transcript lines and found ${cues.length} cue candidates.${syncNote}`);
+    setMessage(`Scanned ${lines.length} transcript/caption lines and found ${cues.length} cue candidates.${syncNote}`);
+    return cues;
   } catch (error) {
     showError(error);
+    return [];
   }
 }
 
 async function handleAutoCreateAll() {
   const settings = readSettingsFromDom();
-  if (cues.length === 0) {
-    await handleAnalyzeTranscript();
-  }
+  await detectCuesFromActiveSequence();
 
   const targets = cues.filter((cue) => cue.status === "Needs Text" || cue.status === "Review");
   if (targets.length === 0) {
@@ -212,6 +207,10 @@ async function handleAutoCreateAll() {
 }
 
 async function handleMarkersOnly() {
+  if (cues.length === 0) {
+    await detectCuesFromActiveSequence();
+  }
+
   const targets = cues.filter((cue) => cue.status === "Needs Text" || cue.status === "Review");
   if (targets.length === 0) {
     setMessage("No pending cues need markers.");

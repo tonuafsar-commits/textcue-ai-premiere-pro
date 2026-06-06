@@ -1,0 +1,49 @@
+TextCue AI - If Install Fails
+=============================
+
+Problem: "Compatible app required" or status = -411
+---------------------------------------------------
+This means Adobe Creative Cloud cannot find a compatible Premiere Pro.
+
+Fix:
+1. Install official Adobe Creative Cloud Desktop.
+2. Install official Premiere Pro 25.6 or newer from Creative Cloud.
+3. Open Premiere Pro once.
+4. Close Premiere Pro.
+5. Run the installer again.
+
+Problem: Windows installer stays on "Installing..."
+---------------------------------------------------
+Fix:
+1. Close the installer.
+2. Open Adobe Creative Cloud Desktop.
+3. Run TextCueAIInstaller.exe again.
+4. If it still fails, double-click TextCue-AI-Premiere-Windows.ccx.
+
+Problem: macOS blocks the installer
+-----------------------------------
+Fix:
+1. Right-click Install TextCue AI.command.
+2. Click Open.
+3. If it still does not open, open Terminal in the macOS folder and run:
+   chmod +x "Install TextCue AI.command"
+   ./Install\ TextCue\ AI.command
+
+Problem: TextCue AI does not appear in Premiere
+-----------------------------------------------
+Fix:
+1. Restart Premiere Pro.
+2. Open Window > UXP Plugins > TextCue AI.
+3. Confirm Premiere Pro is 25.6 or newer.
+4. Install again using the .ccx file.
+
+Problem: Generate Text Automatically finds nothing
+--------------------------------------------------
+Fix:
+1. Make sure a sequence is open.
+2. Make sure the sequence has captions or transcript data.
+3. If not, run Premiere's built-in transcription/caption workflow first.
+4. Click Generate Text Automatically again.
+
+Important:
+This package is for official Adobe Premiere Pro. Unofficial/cracked/portable Premiere builds usually cannot install UXP .ccx plugins correctly.

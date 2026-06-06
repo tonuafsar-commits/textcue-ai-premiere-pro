@@ -1,0 +1,32 @@
+TextCue AI - Start Here
+=======================
+
+What this package is for:
+TextCue AI is a Premiere Pro panel that scans captions/transcript data in the active sequence and creates missing on-screen text suggestions.
+
+Before installing:
+1. Use official Adobe Creative Cloud Desktop.
+2. Use official Premiere Pro 25.6 or newer.
+3. Open Premiere Pro once, then close it.
+
+Windows:
+1. Open the Windows folder.
+2. Double-click TextCueAIInstaller.exe.
+3. Restart Premiere Pro.
+4. Open Window > UXP Plugins > TextCue AI.
+
+macOS:
+1. Open the macOS folder.
+2. Right-click Install TextCue AI.command.
+3. Click Open.
+4. Restart Premiere Pro.
+5. Open Window > UXP Plugins > TextCue AI.
+
+How to use:
+1. Open a Premiere project.
+2. Open a sequence that already has captions or transcript data.
+3. Open TextCue AI.
+4. Click Generate Text Automatically.
+
+Important:
+If Premiere has no captions or transcript data, run Premiere's built-in transcription/caption workflow first.

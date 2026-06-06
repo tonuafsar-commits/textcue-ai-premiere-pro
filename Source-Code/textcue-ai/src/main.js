@@ -90,7 +90,7 @@ function initializePanel() {
 }
 
 function bindStylePreview() {
-  for (const id of ["fontFamily", "fontSize", "fontWeight", "fontStyle", "fillColor", "strokeColor", "strokeWidth", "backgroundColor", "placement"]) {
+  for (const id of ["fontFamily", "fontSize", "fontWeight", "fontStyle", "fillColor", "strokeColor", "strokeWidth", "backgroundColor", "enableDefaultBackground", "placement"]) {
     document.getElementById(id).addEventListener("input", updateStylePreview);
     document.getElementById(id).addEventListener("change", updateStylePreview);
   }
@@ -110,7 +110,7 @@ function updateStylePreview() {
   preview.style.fontWeight = settings.fontWeight;
   preview.style.fontStyle = settings.fontStyle;
   preview.style.color = settings.fillColor;
-  preview.style.backgroundColor = settings.backgroundColor;
+  preview.style.backgroundColor = settings.enableDefaultBackground ? settings.backgroundColor : "transparent";
   preview.style.textShadow = buildPreviewStroke(settings.strokeColor, settings.strokeWidth);
   applyPreviewPlacement(preview, settings.placement);
 }
@@ -487,6 +487,7 @@ function buildStyleFromCurrentControls() {
     strokeColor: settings.strokeColor,
     strokeWidth: settings.strokeWidth,
     backgroundColor: settings.backgroundColor,
+    enableDefaultBackground: settings.enableDefaultBackground,
     placement: settings.placement
   };
 }
@@ -500,6 +501,7 @@ function applyCapturedStyleToControls(style) {
   setControlValue("strokeColor", style.strokeColor);
   setControlValue("strokeWidth", style.strokeWidth);
   setControlValue("backgroundColor", style.backgroundColor);
+  setControlChecked("enableDefaultBackground", style.enableDefaultBackground);
   setControlValue("placement", style.placement);
 }
 
@@ -509,6 +511,14 @@ function setControlValue(id, value) {
     return;
   }
   control.value = String(value);
+}
+
+function setControlChecked(id, value) {
+  const control = document.getElementById(id);
+  if (!control || value === undefined || value === null) {
+    return;
+  }
+  control.checked = Boolean(value);
 }
 
 function countByStatus(items) {

@@ -62,7 +62,7 @@ If the manifest changes, unload and reload the plugin in UXP Developer Tool.
    - **Apply Style To All Generated Text** applies that captured style to every text layer generated in the current session.
    - **Sync Edited Text To Layers** pushes changed suggested text back into already-generated text layers.
 
-Generated text uses a bright magenta default background (`#ff00cc`) so editors can spot AI-generated layers quickly before applying a final house style.
+Editors can enable a bright magenta default background (`#ff00cc`) to spot AI-generated layers quickly before applying a final house style. This highlight background is disabled by default.
    - **Undo Generated Text** attempts to remove text created in the current panel session.
 
 ## Detection Modes

@@ -1,4 +1,4 @@
-export const CURRENT_VERSION = "0.1.5";
+export const CURRENT_VERSION = "0.1.6";
 export const LATEST_RELEASE_API = "https://api.github.com/repos/tonuafsar-commits/textcue-ai-premiere-pro/releases/latest";
 export const STABLE_DOWNLOAD_URL = "https://github.com/tonuafsar-commits/textcue-ai-premiere-pro/releases/latest/download/TextCue-AI-All-In-One.zip";
 

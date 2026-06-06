@@ -30,6 +30,9 @@ Text style sync workflow:
 
 The Premiere host calls for reading and applying selected text style are isolated in Source-Code/textcue-ai/src/premiere.js and may need final API method wiring for the exact Premiere Pro UXP version.
 
+Generated text highlight:
+Use "Enable default highlight background" to add a bright magenta background to generated text while reviewing. It is disabled by default.
+
 Read "SOLUTION - Install and Use Problems.txt" if the plugin does not install or does not appear inside Premiere Pro.
 
 Functional status:

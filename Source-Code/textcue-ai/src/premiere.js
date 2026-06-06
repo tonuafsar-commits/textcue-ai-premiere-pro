@@ -97,7 +97,7 @@ export function createPremiereAdapter() {
         fillColor: settings.fillColor || style.fillColor,
         strokeColor: settings.strokeColor || style.strokeColor,
         strokeWidth: Number.isFinite(settings.strokeWidth) ? settings.strokeWidth : style.strokeWidth,
-        backgroundColor: settings.backgroundColor || style.backgroundColor
+        backgroundColor: settings.enableDefaultBackground ? (settings.backgroundColor || style.backgroundColor) : "transparent"
       };
       const payload = {
         text: cue.suggestedText,

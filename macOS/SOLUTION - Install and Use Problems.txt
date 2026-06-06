@@ -87,5 +87,5 @@ macOS:
 ----------------------------
 - Paste or import transcript.
 - Click Analyze Transcript.
-- Use Export Report to create a review list.
 - Use Add Markers Only when host marker APIs are wired for the installed Premiere version.
+- Use Enable default highlight background only when you want generated text to stand out during review.

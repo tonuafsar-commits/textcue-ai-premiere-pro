@@ -11,9 +11,9 @@
       <header class="panel-header">
         <div>
           <h1>TextCue AI</h1>
-          <p id="sequenceStatus">Open a Premiere sequence, then import a transcript.</p>
+          <p id="sequenceStatus">Import a timestamped transcript and generate missing text cues.</p>
         </div>
-        <span class="badge">MVP</span>
+        <span class="badge">v0.1.7</span>
       </header>
 
       <section class="toolbar" aria-label="Main actions">
@@ -26,115 +26,129 @@
         <button id="undoBtn">Undo Generated Text</button>
       </section>
 
-      <section class="settings-grid" aria-label="Settings">
-        <label>
-          Text Mode
-          <select id="textMode">
-            <option value="minimal">Minimal</option>
-            <option value="balanced" selected>Balanced</option>
-            <option value="heavy">Heavy</option>
-          </select>
-        </label>
-        <label>
-          Content Type
-          <select id="contentType">
-            <option>Top 10</option>
-            <option selected>Product Review</option>
-            <option>Tutorial</option>
-            <option>Shorts/Reels</option>
-            <option>Tech Review</option>
-          </select>
-        </label>
-        <label>
-          Style Preset
-          <select id="stylePreset">
-            <option>Minimal Clean</option>
-            <option>Bold YouTube</option>
-            <option selected>Product Review</option>
-            <option>Tech Review</option>
-            <option>Top 10 Style</option>
-            <option>Shorts/Reels Style</option>
-          </select>
-        </label>
-        <label>
-          Text Duration
-          <input id="textDuration" type="number" min="0.5" step="0.1" value="2.5" />
-        </label>
-        <label>
-          Font Family
-          <select id="fontFamily">
-            <option selected>Arial</option>
-            <option>Arial Black</option>
-            <option>Helvetica</option>
-            <option>Futura</option>
-            <option>Montserrat</option>
-            <option>Roboto</option>
-            <option>Impact</option>
-            <option>Times New Roman</option>
-          </select>
-        </label>
-        <label>
-          Font Size
-          <input id="fontSize" type="number" min="24" max="180" step="1" value="68" />
-        </label>
-        <label>
-          Weight
-          <select id="fontWeight">
-            <option value="400">Regular</option>
-            <option value="600">Semi Bold</option>
-            <option value="700" selected>Bold</option>
-            <option value="900">Extra Bold</option>
-          </select>
-        </label>
-        <label>
-          Style
-          <select id="fontStyle">
-            <option value="normal" selected>Normal</option>
-            <option value="italic">Italic</option>
-          </select>
-        </label>
-        <label>
-          Text Color
-          <input id="fillColor" type="color" value="#ffffff" />
-        </label>
-        <label>
-          Stroke Color
-          <input id="strokeColor" type="color" value="#101010" />
-        </label>
-        <label>
-          Stroke Width
-          <input id="strokeWidth" type="number" min="0" max="24" step="1" value="5" />
-        </label>
-        <label>
-          Background
-          <input id="backgroundColor" type="color" value="#ff00cc" />
-        </label>
-        <label class="checkbox-label">
-          <input id="enableDefaultBackground" type="checkbox" />
-          Enable default highlight background
-        </label>
-        <label>
-          Placement
-          <select id="placement">
-            <option value="auto" selected>Auto by Category</option>
-            <option value="lower-third">Lower Third</option>
-            <option value="center-lower">Center Lower</option>
-            <option value="center">Center</option>
-            <option value="right-side">Right Side</option>
-          </select>
-        </label>
-        <label class="checkbox-label">
-          <input id="avoidDuplicates" type="checkbox" checked />
-          Avoid duplicate text
-        </label>
-        <label class="checkbox-label">
-          <input id="addMarkersAfterText" type="checkbox" checked />
-          Add markers after creating text
-        </label>
-        <label class="checkbox-label">
-          <input id="verticalSafeZone" type="checkbox" />
-          Vertical safe zone
-        </label>
+      <section class="settings-panel" aria-label="Settings">
+        <div class="settings-group">
+          <h2>Detection</h2>
+          <div class="settings-grid compact">
+            <label>
+              Text Mode
+              <select id="textMode">
+                <option value="minimal">Minimal</option>
+                <option value="balanced" selected>Balanced</option>
+                <option value="heavy">Heavy</option>
+              </select>
+            </label>
+            <label>
+              Content Type
+              <select id="contentType">
+                <option>Top 10</option>
+                <option selected>Product Review</option>
+                <option>Tutorial</option>
+                <option>Shorts/Reels</option>
+                <option>Tech Review</option>
+              </select>
+            </label>
+            <label>
+              Duration
+              <input id="textDuration" type="number" min="0.5" step="0.1" value="2.5" />
+            </label>
+          </div>
+        </div>
+
+        <div class="settings-group">
+          <h2>Text Style</h2>
+          <div class="settings-grid">
+            <label>
+              Style Preset
+              <select id="stylePreset">
+                <option>Minimal Clean</option>
+                <option>Bold YouTube</option>
+                <option selected>Product Review</option>
+                <option>Tech Review</option>
+                <option>Top 10 Style</option>
+                <option>Shorts/Reels Style</option>
+              </select>
+            </label>
+            <label>
+              Font
+              <select id="fontFamily">
+                <option selected>Arial</option>
+                <option>Arial Black</option>
+                <option>Helvetica</option>
+                <option>Futura</option>
+                <option>Montserrat</option>
+                <option>Roboto</option>
+                <option>Impact</option>
+                <option>Times New Roman</option>
+              </select>
+            </label>
+            <label>
+              Size
+              <input id="fontSize" type="number" min="24" max="180" step="1" value="68" />
+            </label>
+            <label>
+              Weight
+              <select id="fontWeight">
+                <option value="400">Regular</option>
+                <option value="600">Semi Bold</option>
+                <option value="700" selected>Bold</option>
+                <option value="900">Extra Bold</option>
+              </select>
+            </label>
+            <label>
+              Style
+              <select id="fontStyle">
+                <option value="normal" selected>Normal</option>
+                <option value="italic">Italic</option>
+              </select>
+            </label>
+            <label>
+              Placement
+              <select id="placement">
+                <option value="auto" selected>Auto by Category</option>
+                <option value="lower-third">Lower Third</option>
+                <option value="center-lower">Center Lower</option>
+                <option value="center">Center</option>
+                <option value="right-side">Right Side</option>
+              </select>
+            </label>
+            <label>
+              Text
+              <input id="fillColor" type="color" value="#ffffff" />
+            </label>
+            <label>
+              Stroke
+              <input id="strokeColor" type="color" value="#101010" />
+            </label>
+            <label>
+              Stroke Width
+              <input id="strokeWidth" type="number" min="0" max="24" step="1" value="5" />
+            </label>
+            <label>
+              Highlight
+              <input id="backgroundColor" type="color" value="#ff00cc" />
+            </label>
+          </div>
+        </div>
+
+        <div class="settings-group switches">
+          <label class="checkbox-label">
+            <input id="enableDefaultBackground" type="checkbox" />
+            Highlight generated text
+          </label>
+          <label class="checkbox-label">
+            <input id="avoidDuplicates" type="checkbox" checked />
+            Avoid duplicates
+          </label>
+          <label class="checkbox-label">
+            <input id="addMarkersAfterText" type="checkbox" checked />
+            Add markers after text
+          </label>
+          <label class="checkbox-label">
+            <input id="verticalSafeZone" type="checkbox" />
+            Vertical safe zone
+          </label>
+        </div>
       </section>
 
       <section class="transcript-section">

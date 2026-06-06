@@ -14,6 +14,7 @@ TextCue AI is packaged as a Premiere Pro UXP extension MVP.
 - Session tracking for generated text IDs.
 - TXT report export.
 - Premiere adapter that checks for active sequence and isolates host-specific timeline actions.
+- In-panel GitHub release update check for direct-distribution users.
 
 ## Needs Premiere-Version API Wiring
 

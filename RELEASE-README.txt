@@ -10,9 +10,16 @@ Use the macOS folder on macOS:
 - Or double-click TextCue-AI-Premiere-macOS.ccx.
 
 Use Direct-Download-Packages for sharing:
+- TextCue-AI-All-In-One.zip
 - TextCue-AI-Windows-Installer-Package.zip
 - TextCue-AI-macOS-Installer-Package.zip
 - TextCue-AI-Source-Code.zip
+
+Stable latest all-in-one download link:
+https://github.com/tonuafsar-commits/textcue-ai-premiere-pro/releases/latest/download/TextCue-AI-All-In-One.zip
+
+Update notifications:
+The panel checks the latest GitHub release when it opens. If a newer release exists, it shows an update bar with a download link. Creative Cloud automatic update notifications require Adobe Marketplace distribution.
 
 Read "SOLUTION - Install and Use Problems.txt" if the plugin does not install or does not appear inside Premiere Pro.
 

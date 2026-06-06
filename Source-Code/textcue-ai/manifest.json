@@ -2,7 +2,7 @@
   "manifestVersion": 5,
   "id": "com.textcue.ai.premiere",
   "name": "TextCue AI",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "main": "index.html",
   "host": {
     "app": "premierepro",
@@ -30,7 +30,13 @@
     }
   ],
   "requiredPermissions": {
-    "localFileSystem": "request"
+    "localFileSystem": "request",
+    "network": {
+      "domains": [
+        "https://api.github.com",
+        "https://github.com"
+      ]
+    }
   },
   "featureFlags": {
     "enableAlerts": true

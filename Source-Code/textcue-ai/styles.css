@@ -239,3 +239,21 @@ td.actions {
   background: var(--panel);
   color: var(--muted);
 }
+
+.update-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 34px;
+  padding: 8px 10px;
+  border: 1px solid var(--warning);
+  border-radius: 6px;
+  background: #2d2514;
+  color: var(--text);
+}
+
+.update-bar a {
+  color: var(--warning);
+  white-space: nowrap;
+}

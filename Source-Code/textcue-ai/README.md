@@ -2,6 +2,10 @@
 
 TextCue AI is a Premiere Pro UXP panel MVP for finding spoken moments that probably need on-screen text. It parses a timestamped transcript, detects cue-worthy lines, checks the active timeline for existing text-like clips, and lets an editor create text, add review markers, ignore cues, undo generated text from the current session, and export a TXT report.
 
+Stable latest all-in-one download:
+
+https://github.com/tonuafsar-commits/textcue-ai-premiere-pro/releases/latest/download/TextCue-AI-All-In-One.zip
+
 ## Project Structure
 
 ```text

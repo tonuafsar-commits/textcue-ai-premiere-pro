@@ -4,6 +4,7 @@ import { buildReport, exportTextFile } from "./reportExporter.js";
 import { readSettingsFromDom } from "./settings.js";
 import { markCoveredCues } from "./timelineScanner.js";
 import { parseTranscript } from "./transcriptParser.js";
+import { checkForUpdate } from "./updateChecker.js";
 
 let cues = [];
 let generatedTextLayerIds = [];
@@ -62,7 +63,10 @@ function initializePanel() {
     "fileInput",
     "resultsBody",
     "resultSummary",
-    "messageBar"
+    "messageBar",
+    "updateBar",
+    "updateMessage",
+    "updateLink"
   ]) {
     elements[id] = document.getElementById(id);
   }
@@ -78,6 +82,18 @@ function initializePanel() {
 
   refreshSequenceStatus();
   setMessage(premiere.isAvailable ? "Ready." : "Premiere DOM unavailable. UI preview mode is active.");
+  runUpdateCheck();
+}
+
+async function runUpdateCheck() {
+  const update = await checkForUpdate();
+  if (!update.available) {
+    return;
+  }
+
+  elements.updateMessage.textContent = `Update available: v${update.latestVersion}`;
+  elements.updateLink.href = update.url;
+  elements.updateBar.hidden = false;
 }
 
 async function refreshSequenceStatus() {

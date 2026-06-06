@@ -1,0 +1,116 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TextCue AI</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="panel-header">
+        <div>
+          <h1>TextCue AI</h1>
+          <p id="sequenceStatus">Open a Premiere sequence, then scan.</p>
+        </div>
+        <span class="badge">MVP</span>
+      </header>
+
+      <section class="toolbar" aria-label="Main actions">
+        <button id="scanSequenceBtn">Scan Active Sequence</button>
+        <button id="importTranscriptBtn">Import Transcript</button>
+        <button id="autoCreateBtn" class="primary">Auto Create All Text</button>
+        <button id="markersOnlyBtn">Add Markers Only</button>
+        <button id="exportReportBtn">Export Report</button>
+        <button id="undoBtn">Undo Generated Text</button>
+      </section>
+
+      <section class="settings-grid" aria-label="Settings">
+        <label>
+          Text Mode
+          <select id="textMode">
+            <option value="minimal">Minimal</option>
+            <option value="balanced" selected>Balanced</option>
+            <option value="heavy">Heavy</option>
+          </select>
+        </label>
+        <label>
+          Content Type
+          <select id="contentType">
+            <option>Top 10</option>
+            <option selected>Product Review</option>
+            <option>Tutorial</option>
+            <option>Shorts/Reels</option>
+            <option>Tech Review</option>
+          </select>
+        </label>
+        <label>
+          Style Preset
+          <select id="stylePreset">
+            <option>Minimal Clean</option>
+            <option>Bold YouTube</option>
+            <option selected>Product Review</option>
+            <option>Tech Review</option>
+            <option>Top 10 Style</option>
+            <option>Shorts/Reels Style</option>
+          </select>
+        </label>
+        <label>
+          Text Duration
+          <input id="textDuration" type="number" min="0.5" step="0.1" value="2.5" />
+        </label>
+        <label class="checkbox-label">
+          <input id="avoidDuplicates" type="checkbox" checked />
+          Avoid duplicate text
+        </label>
+        <label class="checkbox-label">
+          <input id="addMarkersAfterText" type="checkbox" checked />
+          Add markers after creating text
+        </label>
+        <label class="checkbox-label">
+          <input id="verticalSafeZone" type="checkbox" />
+          Vertical safe zone
+        </label>
+      </section>
+
+      <section class="transcript-section">
+        <div class="section-heading">
+          <h2>Transcript</h2>
+          <button id="analyzeTranscriptBtn" class="primary">Analyze Transcript</button>
+        </div>
+        <textarea id="transcriptInput" spellcheck="false" placeholder="00:12 - At number 5, we have the TORVO TD3 Dash Cam."></textarea>
+      </section>
+
+      <section class="result-section">
+        <div class="section-heading">
+          <h2>Detected Cues</h2>
+          <span id="resultSummary">No transcript analyzed yet.</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>Category</th>
+                <th>Suggested Text</th>
+                <th>Status</th>
+                <th>Confidence</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="resultsBody">
+              <tr>
+                <td colspan="6" class="empty-state">Paste or import a timestamped transcript to begin.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <footer id="messageBar" role="status">Ready.</footer>
+    </main>
+
+    <input id="fileInput" type="file" accept=".txt,.srt,.vtt" hidden />
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>

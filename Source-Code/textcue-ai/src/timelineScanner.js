@@ -10,6 +10,9 @@ export async function markCoveredCues(cues, premiere, settings) {
 
   const ranges = await premiere.findTextLikeClips(sequence);
   return cues.map((cue) => {
+    if (cue.textLayerId || cue.status === "Created" || cue.status === "Text Edited") {
+      return cue;
+    }
     const covered = ranges.some((range) => overlapsTolerance(cue.startSeconds, range, settings));
     return covered ? { ...cue, status: "Covered" } : cue;
   });

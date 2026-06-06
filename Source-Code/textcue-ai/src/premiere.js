@@ -104,7 +104,12 @@ export function createPremiereAdapter() {
         startSeconds: cue.startSeconds,
         durationSeconds: settings.textDuration,
         placement: placementForCue(cue.category, settings.placement === "auto" ? style.position : settings.placement, settings.verticalSafeZone),
-        style: finalStyle
+        style: finalStyle,
+        metadata: {
+          generatedBy: "TextCue AI",
+          cueId: cue.id,
+          category: cue.category
+        }
       };
 
       // TODO: Replace these fallbacks with the exact text/graphic creation API available in your Premiere Pro UXP version.
@@ -209,6 +214,24 @@ export function createPremiereAdapter() {
 
       console.info("Apply style requested:", { textLayerId, style });
       throw new Error("Applying style to generated text layers is not available in this Premiere UXP build. Wire the TODO in src/premiere.js.");
+    },
+
+    async updateTextLayerText(textLayerId, text) {
+      const sequence = await this.getActiveSequence();
+      if (!sequence) {
+        throw new Error("No active sequence is open.");
+      }
+
+      // TODO: Wire this to the installed Premiere Pro UXP API for updating an existing generated text layer's source text.
+      if (sequence.updateTextLayerText) {
+        return sequence.updateTextLayerText(textLayerId, text);
+      }
+      if (sequence.setTextLayerText) {
+        return sequence.setTextLayerText(textLayerId, text);
+      }
+
+      console.info("Update generated text requested:", { textLayerId, text });
+      throw new Error("Updating generated text layer content is not available in this Premiere UXP build. Wire the TODO in src/premiere.js.");
     }
   };
 }

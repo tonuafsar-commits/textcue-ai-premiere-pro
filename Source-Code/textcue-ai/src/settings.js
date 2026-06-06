@@ -9,7 +9,7 @@ export const DEFAULT_SETTINGS = {
   fillColor: "#ffffff",
   strokeColor: "#101010",
   strokeWidth: 5,
-  backgroundColor: "#1f7ae0",
+  backgroundColor: "#ff00cc",
   placement: "auto",
   avoidDuplicates: true,
   addMarkersAfterText: true,
@@ -44,7 +44,7 @@ export const STYLE_PRESETS = {
     fillColor: "#ffffff",
     strokeColor: "#101010",
     strokeWidth: 5,
-    backgroundColor: "#1f7ae0",
+    backgroundColor: "#ff00cc",
     position: "lower-third"
   },
   "Tech Review": {

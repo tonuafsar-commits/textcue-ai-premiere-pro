@@ -57,6 +57,7 @@ function initializePanel() {
     "markersOnlyBtn",
     "captureStyleBtn",
     "applyStyleAllBtn",
+    "syncTextBtn",
     "undoBtn",
     "analyzeTranscriptBtn",
     "transcriptInput",
@@ -79,6 +80,7 @@ function initializePanel() {
   elements.markersOnlyBtn.addEventListener("click", handleMarkersOnly);
   elements.captureStyleBtn.addEventListener("click", handleCaptureSelectedStyle);
   elements.applyStyleAllBtn.addEventListener("click", handleApplyStyleToAllGeneratedText);
+  elements.syncTextBtn.addEventListener("click", handleSyncEditedTextToLayers);
   elements.undoBtn.addEventListener("click", handleUndoGeneratedText);
   bindStylePreview();
 
@@ -201,10 +203,13 @@ async function handleAnalyzeTranscript() {
       return;
     }
 
-    cues = detectImportantPhrases(lines, settings);
+    const previousCreatedCues = cues.filter((cue) => cue.textLayerId);
+    cues = mergeGeneratedLayerLinks(detectImportantPhrases(lines, settings), previousCreatedCues);
     cues = await markCoveredCues(cues, premiere, settings);
     renderResults();
-    setMessage(`Analyzed ${lines.length} transcript lines and found ${cues.length} cue candidates.`);
+    const synced = await syncChangedGeneratedTexts();
+    const syncNote = synced > 0 ? ` Synced ${synced} existing layer(s).` : "";
+    setMessage(`Analyzed ${lines.length} transcript lines and found ${cues.length} cue candidates.${syncNote}`);
   } catch (error) {
     showError(error);
   }
@@ -268,6 +273,41 @@ async function handleApplyStyleToAllGeneratedText() {
   }
 }
 
+async function handleSyncEditedTextToLayers() {
+  const synced = await syncChangedGeneratedTexts({ force: true });
+  if (synced === 0) {
+    setMessage("No generated text layers found in this session.", "error");
+    return;
+  }
+
+  setMessage(`Synced edited text to ${synced} generated text layer(s).`);
+}
+
+async function syncChangedGeneratedTexts(options = {}) {
+  const createdCues = cues.filter((cue) => cue.textLayerId && (cue.status === "Created" || cue.status === "Text Edited"));
+  if (createdCues.length === 0) {
+    return 0;
+  }
+
+  let updated = 0;
+  try {
+    for (const cue of createdCues) {
+      if (!options.force && cue.lastSyncedText === cue.suggestedText) {
+        continue;
+      }
+      await premiere.updateTextLayerText(cue.textLayerId, cue.suggestedText);
+      cue.lastSyncedText = cue.suggestedText;
+      cue.status = "Created";
+      updated += 1;
+    }
+    renderResults();
+    return updated;
+  } catch (error) {
+    showError(error);
+    return updated;
+  }
+}
+
 async function handleUndoGeneratedText() {
   if (generatedTextLayerIds.length === 0) {
     setMessage("No generated text from this session to undo.");
@@ -319,6 +359,7 @@ async function createTextForCue(cue, settings) {
   const textLayerId = await premiere.createTextLayer(cue, settings);
   cue.textLayerId = textLayerId;
   cue.status = "Created";
+  cue.lastSyncedText = cue.suggestedText;
   generatedTextLayerIds.push(textLayerId);
   document.getElementById("textPreview").textContent = cue.suggestedText;
 
@@ -362,6 +403,11 @@ function renderResults() {
 
     row.querySelector(".editable-text").addEventListener("change", (event) => {
       cue.suggestedText = event.target.value.trim() || cue.suggestedText;
+      if (cue.textLayerId && cue.status === "Created") {
+        cue.status = "Text Edited";
+      }
+      document.getElementById("textPreview").textContent = cue.suggestedText;
+      renderResults();
     });
     row.querySelector('[data-action="jump"]').addEventListener("click", () => handleCueJump(cue));
     row.querySelector('[data-action="create"]').addEventListener("click", () => handleCueCreate(cue));
@@ -407,6 +453,27 @@ function handleCueIgnore(cue) {
   cue.ignored = true;
   renderResults();
   setMessage(`Ignored cue: ${cue.suggestedText}`);
+}
+
+function mergeGeneratedLayerLinks(nextCues, previousCreatedCues) {
+  return nextCues.map((cue) => {
+    const previous = previousCreatedCues.find((item) => (
+      Math.abs(item.startSeconds - cue.startSeconds) < 0.25 &&
+      item.category === cue.category
+    ));
+
+    if (!previous) {
+      return cue;
+    }
+
+    return {
+      ...cue,
+      status: previous.suggestedText === cue.suggestedText ? previous.status : "Text Edited",
+      markerId: previous.markerId,
+      textLayerId: previous.textLayerId,
+      lastSyncedText: previous.lastSyncedText
+    };
+  });
 }
 
 function buildStyleFromCurrentControls() {

@@ -17,8 +17,8 @@ Windows:
 
 macOS:
 1. Open the macOS folder.
-2. Right-click Install TextCue AI.command.
-3. Click Open.
+2. Double-click TextCue-AI-Premiere-macOS.ccx.
+3. If that does not work, right-click Install TextCue AI.command and click Open.
 4. Restart Premiere Pro.
 5. Open Window > UXP Plugins > TextCue AI.
 

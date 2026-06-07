@@ -23,9 +23,21 @@ Fix:
 Problem: macOS blocks the installer
 -----------------------------------
 Fix:
-1. Right-click Install TextCue AI.command.
-2. Click Open.
-3. If it still does not open, open Terminal in the macOS folder and run:
+1. First try double-clicking TextCue-AI-Premiere-macOS.ccx.
+2. If that does not work, right-click Install TextCue AI.command.
+3. Click Open.
+4. If it still does not open, open Terminal in the macOS folder and run:
+   chmod +x "Install TextCue AI.command"
+   ./Install\ TextCue\ AI.command
+
+Problem: macOS says the command file is not executable
+------------------------------------------------------
+Fix:
+1. Open Terminal.
+2. Type:
+   cd 
+3. Drag the macOS folder into Terminal and press Enter.
+4. Run:
    chmod +x "Install TextCue AI.command"
    ./Install\ TextCue\ AI.command
 
